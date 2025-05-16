@@ -15,10 +15,7 @@ const bookingSchema = new mongoose.Schema({
   renterId: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
   carId: { type: mongoose.Schema.Types.ObjectId, ref: "car" },
   ownerId: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
-  createdAt: { type: Date, default: Date.now() },
-  updatedAt: { type: Date, default: Date.now() },
-  reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "review" }],
-});
+},{timestamps: true});
 
 const Booking = mongoose.model("booking", bookingSchema);
 module.exports = Booking;
