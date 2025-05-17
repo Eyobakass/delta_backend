@@ -22,9 +22,7 @@ const carSchema = new mongoose.Schema({
     default: "available",
   },
   averageRating: { type: Number, default: 3 },
-  createdAt: { type: Date, default: Date.now() },
-  updatedAt: { type: Date, default: Date.now() },
-});
+},{timestamps: true});
 
 const Car = mongoose.model("car", carSchema);
 module.exports = Car;

@@ -8,6 +8,10 @@ const updateBookingCompletionStatus = async (bookingId) => {
   const booking = await Booking.findById(bookingId);
   if (booking.status == "approved" && booking.endTime < Date.now()) {
     booking.status = "completed";
+    const car= await Car.findById(booking.carId);
+    if (!car) return res.status(404).send("Car not found");
+    car.status = "available";
+    await car.save();
     await booking.save();
   }
 };
@@ -29,9 +33,12 @@ router.get("/:renterId", authorization, async (req, res) => {
 router.post("/", authorization, async (req, res) => {
   if (req.user.role != "renter")
     return res.status(401).send("you are unauthorized");
+
   const { startTime, endTime, totalCost, carId } = req.body;
   const car = await Car.findById(carId).select("ownerId");
   if (!car) return res.status(404).send("Car not found");
+  if (car.status != "available")
+    return res.status(400).send("Car is not available for booking");
   const ownerId = car?.ownerId;
 
   const booking = new Booking({
@@ -43,6 +50,7 @@ router.post("/", authorization, async (req, res) => {
     renterId: req.user._id,
   });
   await booking.save();
+  car.status = "pendingApproval";
   res.send(booking);
 });
 router.put("/:id", authorization, async (req, res) => {
@@ -57,6 +65,10 @@ router.put("/:id", authorization, async (req, res) => {
       { new: true }
     );
     if (!booking) return res.status(404).send("Booking not found");
+    const car= await Car.findById(booking.carId);
+    if (!car) return res.status(404).send("Car not found");
+    car.status = req.body.status=="approved"?"rented":"available";
+    await car.save();
     res.send(booking);
   }
   if (req.user.role == "admin") {
