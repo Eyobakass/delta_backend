@@ -3,7 +3,7 @@ const router = express.Router();
 const Car = require("../models/car");
 const Booking = require("../models/booking");
 const Review = require("../models/review");
-const authorization = require("../middlewares/authorization");
+const {authorization} = require("../middlewares/authorization");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 
@@ -13,8 +13,8 @@ router.get("/", authorization, async (req, res) => {
   const users = await User.find();
   res.send(users);
 });
-router.get("/:id", authorization, async (req, res) => {
-  if (req.user.role != "admin" && !req.user._id.equals(req.params.id))
+router.get("/:id",authorization, async (req, res) => {
+  if (req.user.role != "admin" && req.user._id!=req.params.id)
     return res.status(401).send("you are unauthorized");
   const user = await User.findById(req.params.id);
   if (!user) return res.status(404).send("User not found");
@@ -82,7 +82,7 @@ router.put("/refreshAll", authorization, async (req, res) => {
   res.send(users);
 });
 router.put("/:id", authorization, async (req, res) => {
-  if (req.user.role != "admin" && !req.user._id.equals(req.params.id))
+  if (req.user.role != "admin" && req.user._id != req.params.id)
     return res.status(401).send("you are unauthorized");
 
   const { firstName, lastName, email, password } = req.body;
@@ -103,7 +103,7 @@ router.put("/:id", authorization, async (req, res) => {
   res.send(user);
 });
 router.put("/refreshOne/:id", authorization, async (req, res) => {
-  if (req.user.role != "admin" && !req.user._id.equals(req.params.id))
+  if (req.user.role != "admin" && req.user._id != req.params.id)
     return res.status(401).send("you are unauthorized");
   const user = await User.findById(req.params.id);
   if (!user) return res.status(404).send("User not found");
@@ -125,7 +125,7 @@ router.put("/refreshOne/:id", authorization, async (req, res) => {
   res.send(user);
 });
 router.delete("/:id", authorization, async (req, res) => {
-  if (req.user.role != "admin" && !req.user._id.equals(req.params.id))
+  if (req.user.role != "admin" && req.user._id != req.params.id)
     return res.status(401).send("you are unauthorized");
   const user = await User.findByIdAndDelete(req.params.id);
   if (!user) return res.status(404).send("User not found");

@@ -3,7 +3,7 @@ const router = express.Router();
 const Car = require("../models/car");
 const Booking = require("../models/booking");
 const Review = require("../models/review");
-const authorization = require("../middlewares/authorization");
+const {authorization} = require("../middlewares/authorization");
 const updateBookingCompletionStatus = async (bookingId) => {
   const booking = await Booking.findById(bookingId);
   if (booking.status == "approved" && booking.endTime < Date.now()) {
