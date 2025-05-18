@@ -37,7 +37,7 @@ router.post("/car/:carId", authorization, async (req, res) => {
     });
     if (alreadyReviewed)
       return res.status(400).send("you already reviewed this car");
-    const booking = await Booking.findOne({ renterIdId: req.user._id, carId: req.params.carId });
+    const booking = await Booking.findOne({ renterId: req.user._id, carId: req.params.carId });
     if (!booking)
       return res.status(404).send("can't review a car you didn't booked");
 
@@ -62,7 +62,7 @@ router.post("/owner/:ownerId", authorization, async (req, res) => {
     return res.status(401).send("you are unauthorized");
   }else if(req.user.role=="renter"){
     const alreadyReviewed = await Review.findOne({
-      reviewedEntityId: req.params.carId,
+      reviewedEntityId: req.params.ownerId,
       reviewerId: req.user._id,
     });
     if (alreadyReviewed)
@@ -90,7 +90,7 @@ router.post("/renter/:renterId", authorization, async (req, res) => {
     return res.status(401).send("you are unauthorized");
   }else if(req.user.role=="owner"){
     const alreadyReviewed = await Review.findOne({
-      reviewedEntityId: req.params.carId,
+      reviewedEntityId: req.params.renterId,
       reviewerId: req.user._id,
     });
     if (alreadyReviewed)
