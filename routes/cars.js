@@ -17,7 +17,7 @@ router.get("/:id", async (req, res) => {
   if (!car) return res.status(404).send("Car not found");
   res.send(car);
 });
-router.get("/byOwner/:ownerId", authorization, async (req, res) => {
+router.get("/byOwner/:ownerId", async (req, res) => {
   const cars = await Car.find({ ownerId: req.params.ownerId });
   if (cars.length == 0) return res.status(404).send("no cars found");
   res.send(cars);

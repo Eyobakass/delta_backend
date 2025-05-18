@@ -13,6 +13,11 @@ router.get("/", authorization, async (req, res) => {
   const users = await User.find();
   res.send(users);
 });
+router.get("/fetchOwners", async (req, res) => {
+  const users = await User.find({ role: "owner" }).select("_id firstName lastName email phoneNumber averageRating reviewersCount");
+  if (!users) return res.status(404).send("no owners found");
+  res.send(users);
+});
 router.get("/:id",authorization, async (req, res) => {
   if (req.user.role != "admin" && req.user._id!=req.params.id)
     return res.status(401).send("you are unauthorized");
